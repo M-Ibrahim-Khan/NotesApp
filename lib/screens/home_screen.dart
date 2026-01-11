@@ -3,11 +3,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:practical_notes_app/screens/edit_screen.dart';
 import '../../providers/note_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../services/notification_services.dart';
 import 'add_note_screen.dart';
 
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  NotificationServices notificationServices = NotificationServices();
+
+  @override
+  void initState() {
+    super.initState();
+    notificationServices.requestNotificationPermission();
+    notificationServices.firebaseInit();
+    //notificationServices.isTokenRefresh();
+    notificationServices.getDeviceToken().then(
+      (value) => debugPrint("Device Token: $value"),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +130,7 @@ class _FilteredNotesList extends ConsumerWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => EditNoteScreen(note: note),
-              ),
+              MaterialPageRoute(builder: (_) => EditNoteScreen(note: note)),
             );
           },
         );
@@ -122,8 +138,6 @@ class _FilteredNotesList extends ConsumerWidget {
     );
   }
 }
-
-
 
 // class HomeScreen extends ConsumerWidget {
 //   const HomeScreen({super.key});

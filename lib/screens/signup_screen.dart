@@ -26,7 +26,9 @@ class SignupScreen extends ConsumerWidget {
                       emailController.text,
                       passwordController.text,
                     );
+                    if(context.mounted) {
                 Navigator.pop(context);
+                    }
               },
               child: const Text('Create Account'),
             ),

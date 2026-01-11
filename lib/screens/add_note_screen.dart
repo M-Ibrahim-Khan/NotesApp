@@ -42,6 +42,7 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
           children: [
             TextField(
               controller: titleController,
+              textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 labelText: 'Title',
                 border: OutlineInputBorder(),
@@ -51,6 +52,7 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
             TextField(
               controller: contentController,
               maxLines: 5,
+              textInputAction: TextInputAction.newline,
               decoration: const InputDecoration(
                 labelText: 'Content',
                 border: OutlineInputBorder(),
@@ -66,7 +68,9 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
                   createdAt: DateTime.now(),
                 );
                 await ref.read(firestoreServiceProvider).addNote(note);
+                if(context.mounted){
                 Navigator.pop(context);
+                }
               },
               child: const Text('Save Note'),
             ),
