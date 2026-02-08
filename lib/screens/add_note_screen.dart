@@ -4,7 +4,9 @@ import '../../models/note_model.dart';
 import '../../providers/note_provider.dart';
 
 class AddNoteScreen extends ConsumerStatefulWidget {
-  const AddNoteScreen({super.key});
+  const AddNoteScreen({super.key, this.message});
+
+  final String? message;
 
   @override
   ConsumerState<AddNoteScreen> createState() => _AddNoteScreenState();
@@ -19,7 +21,7 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
     super.initState();
     debugPrint('🟠 AddNote initState');
     titleController = TextEditingController();
-    contentController = TextEditingController();
+    contentController = TextEditingController(text: widget.message ?? '');
   }
 
   @override

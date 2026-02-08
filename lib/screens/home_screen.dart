@@ -20,7 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     notificationServices.requestNotificationPermission();
-    notificationServices.firebaseInit();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
     //notificationServices.isTokenRefresh();
     notificationServices.getDeviceToken().then(
       (value) => debugPrint("Device Token: $value"),
@@ -138,80 +139,3 @@ class _FilteredNotesList extends ConsumerWidget {
     );
   }
 }
-
-// class HomeScreen extends ConsumerWidget {
-//   const HomeScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final filteredNotes = ref.watch(filteredNotesProvider);
-//     final notesAsync = ref.watch(notesProvider);
-
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('QuickNotes'),
-//         bottom: PreferredSize(
-//           preferredSize: Size.fromHeight(60),
-//           child: Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: TextField(
-//               onChanged: (value) {
-//                   ref.read(searchQueryProvider.notifier).state = value;
-//                   debugPrint('Called Search Query');
-//               },
-//               decoration: InputDecoration(
-//                 hintText: 'Search notes...',
-//                 prefixIcon: Icon(Icons.search),
-//                 border: OutlineInputBorder(
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//                 filled: true,
-//               ),
-//             ),
-//           ),
-//         ),
-//         actions: [
-//           IconButton(
-//             icon: const Icon(Icons.logout),
-//             onPressed: () => ref.read(authRepositoryProvider).signOut(),
-//           ),
-//         ],
-//       ),
-//       body: notesAsync.when(
-//         loading: () => const Center(child: CircularProgressIndicator()),
-//         error: (err, _) => Center(child: Text(err.toString())),
-//         data: (notes) => notes.isEmpty
-//             ? const Center(child: Text('No notes yet!'))
-//             : ListView.builder(
-//                 itemCount: filteredNotes.length,
-//                 itemBuilder: (context, index) {
-//                   final note = filteredNotes[index];
-//                   return ListTile(
-//                     title: Text(note.title),
-//                     subtitle: Text(
-//                       note.content,
-//                       maxLines: 1,
-//                       overflow: TextOverflow.ellipsis,
-//                     ),
-//                     onTap: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (_) => EditNoteScreen(note: note),
-//                         ),
-//                       );
-//                     },
-//                   );
-//                 },
-//               ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: () => Navigator.push(
-//           context,
-//           MaterialPageRoute(builder: (_) => const AddNoteScreen()),
-//         ),
-//         child: const Icon(Icons.add),
-//       ),
-//     );
-//   }
-// }

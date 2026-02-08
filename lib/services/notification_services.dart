@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:practical_notes_app/screens/add_note_screen.dart';
+// import 'package:practical_notes_app/screens/home_screen.dart';
 
 // One thing not notified. We also put necessary setup in AndroidManifest.xml and Info.plist for iOS.
 // for android: https://firebase.flutter.dev/docs/messaging/overview/#android-integration
@@ -67,14 +70,23 @@ class NotificationServices {
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSetting,
       onDidReceiveNotificationResponse: (payload) {
-      //debugPrint('Notification clicked with payload: ${payload.payload}');
+      handleMessage(context, message);
     });
   }
 
-  void firebaseInit() {
+  void firebaseInit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((message) {
       debugPrint("Firebase Message Title: ${message.notification!.title}");
       debugPrint("Firebase Message Body: ${message.notification!.body}");
+      debugPrint(message.data.toString());
+      debugPrint(message.data["type"]);
+      debugPrint(message.data["id"]);
+      // only android needs this check for local notification
+      if(Platform.isAndroid){
+        if(context.mounted){
+        initializeLocalNotifications(context, message);
+        }
+      }
       showNotification(message);
     });
   }
@@ -127,4 +139,31 @@ class NotificationServices {
       debugPrint("Refreshed Token: $event");
     });
   }
+
+Future<void> setupInteractMessage(BuildContext context) async {
+
+// When App is Terminated
+RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+if (initialMessage != null){
+  if(context.mounted){
+    handleMessage(context, initialMessage);
+    }
+  
+}
+
+// When App is in Background
+FirebaseMessaging.onMessageOpenedApp.listen((message) {
+  if(context.mounted) {
+  handleMessage(context, message);
+  }
+});
+
+}
+
+void handleMessage(BuildContext context, RemoteMessage message){
+  if (message.data["type"] == "msg"){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AddNoteScreen(message: message.data["message"])));
+  }
+}
+
 }
